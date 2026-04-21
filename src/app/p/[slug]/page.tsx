@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { Proyecto, Archivo, Video, Comentario, Aprobacion, SECCIONES } from '@/lib/types';
 import { Logo } from '@/components/Logo';
 import { Gallery } from '@/components/Gallery';
+import { VideoPlayer } from '@/components/VideoPlayer';
 import { C, F } from '@/lib/theme';
 import {
   MapPin, Lock, CheckCircle2, MessageCircle, Eye, Download,
@@ -278,37 +279,18 @@ export default function ClientViewPage() {
               )}
 
               {esVideos && (
-                <div style={{ display: 'grid', gap: 20 }}>
+                <div style={{ display: 'grid', gap: 24 }}>
                   {videos.length === 0 && (
                     <div style={{ padding: 40, background: C.bgCard, textAlign: 'center', color: C.inkMuted, borderRadius: 4 }}>
                       Aún no hay videos.
                     </div>
                   )}
-                  {videos.map(v => {
-                    const esMP4 = v.plataforma === 'mp4' || /\.(mp4|webm|mov)$/i.test(v.url);
-                    const embed = esMP4 ? null : toEmbedUrl(v.url);
-                    return (
-                      <div key={v.id}>
-                        <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 8 }}>{v.titulo}</div>
-                        {esMP4 ? (
-                          <video
-                            src={v.url}
-                            controls
-                            playsInline
-                            style={{ width: '100%', maxHeight: '70vh', background: '#000', display: 'block' }}
-                          />
-                        ) : embed ? (
-                          <div style={{ aspectRatio: '16/9', background: '#000' }}>
-                            <iframe src={embed} style={{ width: '100%', height: '100%', border: 0 }}
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen />
-                          </div>
-                        ) : (
-                          <a href={v.url} target="_blank" style={{ color: C.accent }}>Abrir video</a>
-                        )}
-                      </div>
-                    );
-                  })}
+                  {videos.map(v => (
+                    <div key={v.id}>
+                      <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 8 }}>{v.titulo}</div>
+                      <VideoPlayer video={v} />
+                    </div>
+                  ))}
                 </div>
               )}
 
@@ -432,20 +414,3 @@ export default function ClientViewPage() {
   );
 }
 
-function toEmbedUrl(url: string): string | null {
-  try {
-    const u = new URL(url);
-    if (u.hostname.includes('youtube.com')) {
-      const v = u.searchParams.get('v');
-      if (v) return `https://www.youtube.com/embed/${v}`;
-    }
-    if (u.hostname === 'youtu.be') {
-      return `https://www.youtube.com/embed${u.pathname}`;
-    }
-    if (u.hostname.includes('vimeo.com')) {
-      const id = u.pathname.split('/').filter(Boolean).pop();
-      if (id) return `https://player.vimeo.com/video/${id}`;
-    }
-  } catch {}
-  return null;
-}

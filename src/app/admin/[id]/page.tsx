@@ -299,6 +299,7 @@ export default function EditProyectoPage() {
                           padding: '4px 8px', fontSize: 12, color: C.inkMuted,
                           border: `1px solid ${C.border}`, borderRadius: 3,
                           display: 'flex', alignItems: 'center', gap: 4,
+                          flexShrink: 0,
                         }}>
                           <Eye size={12} /> Ver
                         </a>
@@ -306,6 +307,7 @@ export default function EditProyectoPage() {
                           padding: '4px 8px', fontSize: 12, color: '#a33',
                           background: 'transparent', border: `1px solid ${C.border}`,
                           borderRadius: 3, display: 'flex', alignItems: 'center',
+                          flexShrink: 0,
                         }}>
                           <Trash2 size={12} />
                         </button>
@@ -349,24 +351,41 @@ export default function EditProyectoPage() {
                 padding: 16, border: `1px solid ${C.border}`,
                 borderRadius: 4, background: C.bgCard,
               }}>
-                {videos.map(v => (
-                  <div key={v.id} style={{
-                    display: 'flex', alignItems: 'center', gap: 12,
-                    padding: '8px 0', borderBottom: `1px solid ${C.border}`,
-                  }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 14, fontWeight: 500 }}>{v.titulo}</div>
-                      <div style={{ fontSize: 12, color: C.inkSubtle, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.url}</div>
-                    </div>
-                    <button onClick={() => borrarVideo(v)} style={{
-                      padding: '4px 8px', color: '#a33',
-                      background: 'transparent', border: `1px solid ${C.border}`,
-                      borderRadius: 3,
+                {videos.map(v => {
+                  const esMP4 = v.plataforma === 'mp4';
+                  return (
+                    <div key={v.id} style={{
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      padding: '10px 0', borderBottom: `1px solid ${C.border}`,
                     }}>
-                      <Trash2 size={12} />
-                    </button>
-                  </div>
-                ))}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6 }}>
+                          {v.titulo}
+                          <span style={{
+                            fontSize: 10, fontWeight: 600, padding: '2px 6px',
+                            background: esMP4 ? C.bgGold : C.bgBlue,
+                            color: esMP4 ? C.accent : C.blueDark,
+                            borderRadius: 3, letterSpacing: '0.05em',
+                          }}>
+                            {esMP4 ? 'MP4' : v.plataforma.toUpperCase()}
+                          </span>
+                        </div>
+                        <div style={{
+                          fontSize: 11, color: C.inkSubtle,
+                          overflow: 'hidden', textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap', maxWidth: '100%',
+                        }}>{v.url}</div>
+                      </div>
+                      <button onClick={() => borrarVideo(v)} style={{
+                        padding: '6px 10px', color: '#a33',
+                        background: 'transparent', border: `1px solid ${C.border}`,
+                        borderRadius: 3, flexShrink: 0,
+                      }}>
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  );
+                })}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 12 }}>
                   <button onClick={agregarVideo} style={{
                     padding: '10px 12px',
