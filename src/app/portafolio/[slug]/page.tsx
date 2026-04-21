@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { Nav } from '@/components/Nav';
+import { Gallery } from '@/components/Gallery';
 import { C, F } from '@/lib/theme';
 import { Proyecto, Archivo } from '@/lib/types';
 import { ArrowLeft } from 'lucide-react';
@@ -41,10 +42,21 @@ export default async function PortafolioDetailPage({
 
         {proyecto.cover_url && (
           <div style={{
-            aspectRatio: '16/9',
-            background: `url(${proyecto.cover_url}) center/cover`,
+            width: '100%',
+            background: C.bgSoft,
             marginBottom: 32,
-          }} />
+            overflow: 'hidden',
+          }}>
+            <img
+              src={proyecto.cover_url}
+              alt={proyecto.nombre}
+              style={{
+                width: '100%', height: 'auto', display: 'block',
+                maxHeight: '70vh', objectFit: 'contain',
+                margin: '0 auto',
+              }}
+            />
+          </div>
         )}
 
         <div style={{
@@ -102,17 +114,7 @@ export default async function PortafolioDetailPage({
             <h3 style={{
               fontFamily: F.display, fontSize: 22, fontWeight: 500, marginBottom: 20,
             }}>Galería</h3>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: 12,
-            }}>
-              {archivos.map(a => (
-                <div key={a.id} style={{
-                  aspectRatio: '4/3', background: `url(${a.url}) center/cover`,
-                }} />
-              ))}
-            </div>
+            <Gallery images={archivos.map(a => ({ id: a.id, url: a.url, nombre: a.nombre }))} />
           </>
         )}
       </div>

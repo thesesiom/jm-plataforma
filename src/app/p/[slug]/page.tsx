@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Proyecto, Archivo, Video, Comentario, Aprobacion, SECCIONES } from '@/lib/types';
 import { Logo } from '@/components/Logo';
+import { Gallery } from '@/components/Gallery';
 import { C, F } from '@/lib/theme';
 import {
   MapPin, Lock, CheckCircle2, MessageCircle, Eye, Download,
@@ -189,10 +190,14 @@ export default function ClientViewPage() {
             <div>
               {proyecto.cover_url && (
                 <div style={{
-                  aspectRatio: '16/9',
-                  background: `url(${proyecto.cover_url}) center/cover`,
-                  marginBottom: 24,
-                }} />
+                  width: '100%', background: C.bgSoft,
+                  marginBottom: 24, overflow: 'hidden',
+                }}>
+                  <img src={proyecto.cover_url} alt={proyecto.nombre} style={{
+                    width: '100%', height: 'auto', display: 'block',
+                    maxHeight: '60vh', objectFit: 'contain', margin: '0 auto',
+                  }} />
+                </div>
               )}
               <h3 style={{ fontFamily: F.display, fontSize: 22, fontWeight: 500, marginTop: 0 }}>
                 Resumen del proyecto
@@ -269,17 +274,7 @@ export default function ClientViewPage() {
               </div>
 
               {esImagen && archivosSeccion.length > 0 && (
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                  gap: 8,
-                }}>
-                  {archivosSeccion.map(a => (
-                    <div key={a.id} style={{
-                      aspectRatio: '4/3', background: `url(${a.url}) center/cover`,
-                    }} />
-                  ))}
-                </div>
+                <Gallery images={archivosSeccion.map(a => ({ id: a.id, url: a.url, nombre: a.nombre }))} />
               )}
 
               {esVideos && (
