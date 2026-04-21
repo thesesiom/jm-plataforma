@@ -116,8 +116,49 @@ export default function EditProyectoPage() {
     await cargar();
   }
 
+  async function subirVideoMP4(file: File) {
+    if (!proyecto) return;
+    if (file.size > 50 * 1024 * 1024) {
+      alert('El video pesa más de 50 MB. Considera comprimirlo o subirlo a YouTube.');
+      return;
+    }
+    const titulo = prompt('Título del video:', file.name.replace(/\.[^.]+$/, ''));
+    if (!titulo) return;
+
+    setUploadingSection('video-mp4');
+    const ext = file.name.split('.').pop();
+    const path = `${proyecto.id}/videos/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
+
+    const { error: upErr } = await supabase.storage
+      .from('proyectos')
+      .upload(path, file);
+    if (upErr) {
+      alert('Error al subir: ' + upErr.message);
+      setUploadingSection(null);
+      return;
+    }
+    const { data: urlData } = supabase.storage
+      .from('proyectos')
+      .getPublicUrl(path);
+
+    await supabase.from('videos').insert({
+      proyecto_id: id,
+      titulo,
+      url: urlData.publicUrl,
+      plataforma: 'mp4',
+    });
+    setUploadingSection(null);
+    await cargar();
+  }
+
   async function borrarVideo(v: Video) {
     if (!confirm(`¿Borrar video "${v.titulo}"?`)) return;
+    if (v.plataforma === 'mp4' && v.url.includes('/storage/')) {
+      const match = v.url.match(/proyectos\/(.+)$/);
+      if (match) {
+        await supabase.storage.from('proyectos').remove([match[1]]);
+      }
+    }
     await supabase.from('videos').delete().eq('id', v.id);
     await cargar();
   }
@@ -326,13 +367,38 @@ export default function EditProyectoPage() {
                     </button>
                   </div>
                 ))}
-                <button onClick={agregarVideo} style={{
-                  marginTop: 12, padding: '10px 12px', width: '100%',
-                  background: C.bgSoft, border: `1px dashed ${C.borderDark}`,
-                  borderRadius: 4, fontSize: 13,
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 12 }}>
+                  <button onClick={agregarVideo} style={{
+                    padding: '10px 12px',
+                    background: C.bgSoft, border: `1px dashed ${C.borderDark}`,
+                    borderRadius: 4, fontSize: 13,
+                  }}>
+                    + YouTube / Vimeo
+                  </button>
+                  <label style={{
+                    padding: '10px 12px', textAlign: 'center',
+                    background: C.bgSoft, border: `1px dashed ${C.borderDark}`,
+                    borderRadius: 4, fontSize: 13, cursor: 'pointer',
+                  }}>
+                    {uploadingSection === 'video-mp4' ? 'Subiendo...' : '+ Subir MP4'}
+                    <input
+                      type="file"
+                      accept="video/mp4,video/webm,video/quicktime"
+                      style={{ display: 'none' }}
+                      onChange={e => {
+                        const f = e.target.files?.[0];
+                        if (f) subirVideoMP4(f);
+                        e.target.value = '';
+                      }}
+                      disabled={uploadingSection !== null}
+                    />
+                  </label>
+                </div>
+                <div style={{
+                  marginTop: 8, fontSize: 11, color: C.inkSubtle, textAlign: 'center',
                 }}>
-                  + Agregar video de YouTube / Vimeo
-                </button>
+                  MP4 hasta 50 MB. Videos largos: usa YouTube no listado.
+                </div>
               </div>
             </section>
           </div>

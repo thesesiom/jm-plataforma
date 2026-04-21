@@ -285,11 +285,19 @@ export default function ClientViewPage() {
                     </div>
                   )}
                   {videos.map(v => {
-                    const embed = toEmbedUrl(v.url);
+                    const esMP4 = v.plataforma === 'mp4' || /\.(mp4|webm|mov)$/i.test(v.url);
+                    const embed = esMP4 ? null : toEmbedUrl(v.url);
                     return (
                       <div key={v.id}>
                         <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 8 }}>{v.titulo}</div>
-                        {embed ? (
+                        {esMP4 ? (
+                          <video
+                            src={v.url}
+                            controls
+                            playsInline
+                            style={{ width: '100%', maxHeight: '70vh', background: '#000', display: 'block' }}
+                          />
+                        ) : embed ? (
                           <div style={{ aspectRatio: '16/9', background: '#000' }}>
                             <iframe src={embed} style={{ width: '100%', height: '100%', border: 0 }}
                               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
