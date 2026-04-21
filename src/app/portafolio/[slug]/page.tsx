@@ -1,0 +1,121 @@
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
+import { Nav } from '@/components/Nav';
+import { C, F } from '@/lib/theme';
+import { Proyecto, Archivo } from '@/lib/types';
+import { ArrowLeft } from 'lucide-react';
+
+export const revalidate = 60;
+
+async function getData(slug: string) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+  const { data: p } = await supabase.from('proyectos').select('*')
+    .eq('slug', slug).eq('publicado_portafolio', true).single();
+  if (!p) return null;
+  const { data: archivos } = await supabase.from('archivos').select('*')
+    .eq('proyecto_id', p.id).in('seccion', ['photos', 'renders']);
+  return { proyecto: p as Proyecto, archivos: (archivos || []) as Archivo[] };
+}
+
+export default async function PortafolioDetailPage({
+  params,
+}: { params: { slug: string } }) {
+  const data = await getData(params.slug);
+  if (!data) notFound();
+  const { proyecto, archivos } = data;
+
+  return (
+    <>
+      <Nav />
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 24px 80px' }}>
+        <Link href="/portafolio" style={{
+          display: 'flex', alignItems: 'center', gap: 6,
+          color: C.inkMuted, fontSize: 13, marginBottom: 24,
+        }}>
+          <ArrowLeft size={14} /> Volver al portafolio
+        </Link>
+
+        {proyecto.cover_url && (
+          <div style={{
+            aspectRatio: '16/9',
+            background: `url(${proyecto.cover_url}) center/cover`,
+            marginBottom: 32,
+          }} />
+        )}
+
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) 1fr',
+          gap: 60, marginBottom: 60,
+        }}>
+          <div>
+            <div style={{
+              fontSize: 11, color: C.accent, letterSpacing: '0.15em',
+              textTransform: 'uppercase', marginBottom: 16,
+            }}>{proyecto.tipo} · {proyecto.anio}</div>
+            <h1 style={{
+              fontFamily: F.display, fontSize: 'clamp(36px, 5vw, 60px)',
+              fontWeight: 500, margin: 0, lineHeight: 1,
+              letterSpacing: '-0.02em',
+            }}>{proyecto.nombre}</h1>
+            {proyecto.tagline && (
+              <p style={{
+                fontSize: 18, lineHeight: 1.6, color: C.inkMuted,
+                marginTop: 24, maxWidth: 600,
+              }}>{proyecto.tagline}</p>
+            )}
+            {proyecto.descripcion && (
+              <p style={{
+                fontSize: 15, lineHeight: 1.7, color: C.ink,
+                marginTop: 16, maxWidth: 600, whiteSpace: 'pre-wrap',
+              }}>{proyecto.descripcion}</p>
+            )}
+          </div>
+          <aside style={{
+            background: C.bgCard, padding: 24, borderRadius: 4,
+            border: `1px solid ${C.border}`, fontSize: 14, height: 'fit-content',
+          }}>
+            {([
+              ['Cliente', proyecto.cliente],
+              ['Ubicación', proyecto.ubicacion],
+              ['Año', proyecto.anio],
+              ['Tipología', proyecto.tipo],
+              ['Superficie', proyecto.superficie],
+              ['Niveles', proyecto.niveles],
+            ] as const).filter(([_, v]) => v).map(([k, v]) => (
+              <div key={k} style={{
+                display: 'flex', justifyContent: 'space-between',
+                padding: '10px 0', borderBottom: `1px solid ${C.border}`,
+              }}>
+                <span style={{ color: C.inkSubtle }}>{k}</span>
+                <span style={{ color: C.ink, fontWeight: 500 }}>{v}</span>
+              </div>
+            ))}
+          </aside>
+        </div>
+
+        {archivos.length > 0 && (
+          <>
+            <h3 style={{
+              fontFamily: F.display, fontSize: 22, fontWeight: 500, marginBottom: 20,
+            }}>Galería</h3>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: 12,
+            }}>
+              {archivos.map(a => (
+                <div key={a.id} style={{
+                  aspectRatio: '4/3', background: `url(${a.url}) center/cover`,
+                }} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </>
+  );
+}
