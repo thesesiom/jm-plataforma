@@ -165,22 +165,29 @@ export default function ClientViewPage() {
         </div>
 
         <div style={{
-          display: 'flex', gap: 2, marginBottom: 32, overflow: 'auto',
-          borderBottom: `1px solid ${C.border}`,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
+          gap: 4, marginBottom: 32, padding: 4,
+          background: C.bgCard, border: `1px solid ${C.border}`,
+          borderRadius: 6,
         }}>
           {sectionsDisponibles.map(s => {
             const Icon = s.icon;
             const active = section === s.id;
             return (
               <button key={s.id} onClick={() => setSection(s.id)} style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                padding: '12px 16px', background: 'none', border: 'none',
-                borderBottom: `2px solid ${active ? C.ink : 'transparent'}`,
-                color: active ? C.ink : C.inkMuted,
-                fontSize: 13, fontWeight: active ? 600 : 400,
-                whiteSpace: 'nowrap',
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center', gap: 6,
+                padding: '12px 8px',
+                background: active ? C.ink : 'transparent',
+                color: active ? C.bg : C.inkMuted,
+                border: 'none', borderRadius: 4,
+                fontSize: 12, fontWeight: active ? 600 : 400,
+                textAlign: 'center', minHeight: 60,
+                transition: 'all 0.15s',
               }}>
-                <Icon size={14} /> {s.label}
+                <Icon size={16} />
+                <span style={{ lineHeight: 1.2 }}>{s.label}</span>
               </button>
             );
           })}
