@@ -193,7 +193,7 @@ export default function EditProyectoPage() {
           <ArrowLeft size={14} /> Volver a proyectos
         </Link>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) 1fr', gap: 32 }}>
+        <div className="stack-on-mobile" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) 1fr', gap: 32 }}>
           <div>
             <div style={{
               fontSize: 11, color: C.accent, letterSpacing: '0.15em',

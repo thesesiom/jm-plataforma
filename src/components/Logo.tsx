@@ -4,9 +4,15 @@ type LogoProps = {
   size?: 'sm' | 'md' | 'lg';
   showText?: boolean;
   inverted?: boolean;
+  responsiveText?: boolean;
 };
 
-export function Logo({ size = 'md', showText = true, inverted = false }: LogoProps) {
+export function Logo({
+  size = 'md',
+  showText = true,
+  inverted = false,
+  responsiveText = false,
+}: LogoProps) {
   const heights = { sm: 32, md: 44, lg: 64 };
   const logoHeight = heights[size];
   const textColor = inverted ? '#FFFFFF' : C.ink;
@@ -18,7 +24,7 @@ export function Logo({ size = 'md', showText = true, inverted = false }: LogoPro
     }}>
       <img
         src="/logo-jm.png"
-        alt="JM"
+        alt="JM Ingeniería & Arquitectura"
         style={{
           height: logoHeight,
           width: 'auto',
@@ -27,11 +33,14 @@ export function Logo({ size = 'md', showText = true, inverted = false }: LogoPro
         }}
       />
       {showText && (
-        <div style={{
-          display: 'flex', alignItems: 'center',
-          borderLeft: `1px solid ${accentColor}`, paddingLeft: 14,
-          height: logoHeight * 0.72,
-        }}>
+        <div
+          className={responsiveText ? 'logo-text-responsive' : ''}
+          style={{
+            display: 'flex', alignItems: 'center',
+            borderLeft: `1px solid ${accentColor}`, paddingLeft: 14,
+            height: logoHeight * 0.72,
+          }}
+        >
           <span style={{
             fontFamily: F.brand,
             fontSize: size === 'sm' ? 11 : size === 'md' ? 13 : 16,

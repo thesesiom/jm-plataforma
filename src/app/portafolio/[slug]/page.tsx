@@ -62,7 +62,7 @@ export default async function PortafolioDetailPage({
           </div>
         )}
 
-        <div style={{
+        <div className="stack-on-mobile" style={{
           display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) 1fr',
           gap: 60, marginBottom: 60,
         }}>

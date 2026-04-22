@@ -119,7 +119,7 @@ export default function ClientViewPage() {
           <Lock size={14} /> Acceso privado a tu proyecto · link único
         </div>
 
-        <div style={{
+        <div className="stack-on-mobile" style={{
           display: 'grid', gridTemplateColumns: 'minmax(0, 1.5fr) 1fr',
           gap: 32, marginBottom: 32,
         }}>
@@ -194,7 +194,7 @@ export default function ClientViewPage() {
         </div>
 
         {section === 'overview' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) 1fr', gap: 32 }}>
+          <div className="stack-on-mobile" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) 1fr', gap: 32 }}>
             <div>
               {proyecto.cover_url && (
                 <div style={{

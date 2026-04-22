@@ -25,3 +25,62 @@ input:focus, textarea:focus, select:focus, button:focus-visible {
 .card-arrow { display: inline-block; transition: transform 0.2s ease; }
 .project-card:hover .card-arrow { transform: translateX(4px); }
 .file-row:hover { background: #FAFCFE; }
+
+/* Nav */
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.nav-links {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.nav-link-plain {
+  font-size: 13px;
+  color: #4E6880;
+  padding: 8px 12px;
+  white-space: nowrap;
+}
+.nav-link-admin {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #0E2A44;
+  padding: 8px 14px;
+  background: #FFFFFF;
+  border: 1px solid #D9E3ED;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .nav-inner {
+    padding: 12px 14px;
+  }
+  /* Ocultar texto del logo en móvil, mostrar solo JM */
+  .logo-text-responsive {
+    display: none !important;
+  }
+  .nav-link-plain {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .nav-link-admin {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  /* Apilar grids de 2 columnas en móvil */
+  .stack-on-mobile {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+}

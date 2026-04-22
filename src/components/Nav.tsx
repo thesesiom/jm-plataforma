@@ -12,26 +12,18 @@ export function Nav({ showAdmin = true }: { showAdmin?: boolean }) {
       backdropFilter: 'blur(12px)',
       borderBottom: `1px solid ${C.border}`,
     }}>
-      <div style={{
-        maxWidth: 1280, margin: '0 auto', padding: '16px 24px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        gap: 12,
-      }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <Logo size="md" />
+      <div className="nav-inner">
+        <Link href="/" style={{ textDecoration: 'none', minWidth: 0 }}>
+          <Logo size="md" responsiveText />
         </Link>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <Link href="/portafolio" style={{
-            fontSize: 13, color: C.inkMuted, padding: '8px 12px',
-          }}>Portafolio</Link>
+        <div className="nav-links">
+          <Link href="/portafolio" className="nav-link-plain">
+            Portafolio
+          </Link>
           {showAdmin && (
-            <Link href="/admin" style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              fontSize: 13, color: C.ink, padding: '8px 14px',
-              background: C.bgCard, border: `1px solid ${C.border}`,
-              borderRadius: 4,
-            }}>
-              <Settings size={14} /> Admin
+            <Link href="/admin" className="nav-link-admin">
+              <Settings size={14} />
+              <span className="nav-admin-label">Admin</span>
             </Link>
           )}
         </div>
