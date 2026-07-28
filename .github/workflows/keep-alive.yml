@@ -1,0 +1,26 @@
+name: Mantener Supabase activo
+
+# Se ejecuta automáticamente cada 3 días (y también se puede correr a mano)
+on:
+  schedule:
+    - cron: '0 9 */3 * *'   # cada 3 días a las 9:00 UTC
+  workflow_dispatch:          # permite ejecutarlo manualmente desde GitHub
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Consultar la base de datos para mantenerla despierta
+        run: |
+          echo "Haciendo ping a Supabase..."
+          RESPUESTA=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/proyectos?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+          echo "Código de respuesta: $RESPUESTA"
+          if [ "$RESPUESTA" = "200" ]; then
+            echo "OK - Supabase respondió correctamente. Base de datos activa."
+          else
+            echo "Advertencia - respuesta inesperada: $RESPUESTA"
+            exit 1
+          fi
